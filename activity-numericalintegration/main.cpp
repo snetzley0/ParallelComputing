@@ -25,60 +25,57 @@ int main (int argc, char* argv[]) {
   }
 
   float integral;
-  int x, sum;
-  int functionid, a, b, n, intensity;
+  float x;
+  float a, b, n, sum, width;
+  int functionid, intensity;
+  
   functionid = atoi(argv[1]);
   a = atoi(argv[2]);
   b = atoi(argv[3]);
   n = atoi(argv[4]);
   intensity = atoi(argv[5]);
 
-  /* test
-  std::cout << functionid << std::endl;
-  std::cout << a << std::endl;
-  std::cout << b << std::endl;
-  std::cout << n << std::endl;
-  std::cout << intensity << std::endl; */
-
   // start time measurement
   auto start = std::chrono::system_clock::now();
+
+  // summation of function
+  int i;
+  for ( i = 0; i < n; i++) {
+    // calculate x to pass
+    x = (a + (i + .5) * ((b - a) / n));
+
+    // determine function to sum and pass x
+    if (functionid == 1) {
+      sum += f1(x, intensity);
+    }
+    else if (functionid == 2) {
+      sum += f2(x, intensity);
+    }
+    else if (functionid == 3) {
+      sum += f3(x, intensity);
+    }
+    else if (functionid == 4) {
+      sum += f4(x, intensity);
+    }  
+  }
   
-  // sum of function from 0 to n - 1
-  for ( int i = 0; i < n; i++) {
-    sum += (a + (i + .5) * ((b - a) / n));
-  }
-
-  // **CHECK SUM**
+  // calculate width
+  width = ((b - a) / n);
   
-  // multiply sum with (b - a) / n
-  x = ((b - a) / n) * sum;
+  // **CHECK FINAL**
+  integral = width * sum;
 
-  // **CHECK X**
-
-  // determine which function to calculate
-  if (functionid == 1) {
-    integral = f1(x, intensity);
-  }
-  else if (functionid == 2) {
-    integral = f2(x, intensity);
-  }
-  else if (functionid == 3) {
-    integral = f3(x, intensity);
-  }
-  else if (functionid == 4) {
-    integral = f4(x, intensity);
-  }
-
-  //stop time measurement and calculate total
+  // stop time measurement and calculate total
   auto end = std::chrono::system_clock::now();
 
-  // **MAKE MORE ACCURATE**
+  // calculate final time and format
   auto time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   float newTime = time.count() / 1000.000;
-  
+
+  // output results
   std::cout << integral << std::endl;
   std::cerr << newTime << std::endl;
   
-  
+  // END
   return 0;
 }
