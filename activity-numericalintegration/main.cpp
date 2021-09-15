@@ -1,3 +1,7 @@
+// Stephen Netzley
+// 9/15/2021
+// ITCS-3145
+
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
