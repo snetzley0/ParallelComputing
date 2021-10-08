@@ -1,0 +1,5 @@
+Why is the speedup (or slowdown) for coarse grain the way it is?
+
+It seems that there is quite a slowdown as you add more cores.
+Perhaps because there are more threads to lock and unlock, 
+there is a lot of time that threads spend waiting on each other.
