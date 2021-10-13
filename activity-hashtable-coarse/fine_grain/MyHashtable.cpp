@@ -27,7 +27,7 @@ protected:
   typedef typename Dictionary<K, V>::dict_iter dict_iter;
 
   // create mutex locks
-  std::array<std::mutex, 1000000> muts;
+  std::array<std::mutex, 1000> muts;
   
   int capacity;
   int count;
@@ -139,7 +139,7 @@ public:
     Node<K,V>* node = this->table[index];
 
     // lock index
-    muts[index].lock();
+    muts[index % 1000].lock();
     
     while (node != nullptr) {
       if (node->key == key) {
@@ -150,7 +150,7 @@ public:
     }
 
     // unlock index
-    muts[index].unlock();
+    muts[index % 1000].unlock();
 
     //if we get here, then the key has not been found
     node = new Node<K,V>(key, value);
