@@ -5,6 +5,7 @@
 #include <functional>
 #include <iostream>
 #include <vector>
+#include <mutex>
 
 template<class K, class V>
 struct Node {
@@ -25,6 +26,9 @@ class MyHashtable : public Dictionary<K, V> {
 protected:
   typedef typename Dictionary<K, V>::dict_iter dict_iter;
 
+  // create mutex locks
+  std::array<std::mutex, 1000000> muts;
+  
   int capacity;
   int count;
   double loadFactor;
@@ -99,6 +103,12 @@ protected:
   }
 
 public:
+  virtual std::size_t getIndex(const K& key) const {
+    std::size_t index = std::hash<K>{}(key) % this->capacity;
+    index = index < 0 ? index + this->capacity : index;
+    return index;
+  }
+
   /**
    * Returns the node at key
    * @param key key of node to get
@@ -108,10 +118,11 @@ public:
     std::size_t index = std::hash<K>{}(key) % this->capacity;
     index = index < 0 ? index + this->capacity : index;
     const Node<K,V>* node = this->table[index];
+    const V value = 1;
 
     while (node != nullptr) {
       if (node->key == key)
-	      return node->value;
+        return node->value;
       node = node->next;
     }
     return V();
@@ -126,6 +137,9 @@ public:
     std::size_t index = std::hash<K>{}(key) % this->capacity;
     index = index < 0 ? index + this->capacity : index;
     Node<K,V>* node = this->table[index];
+
+    // lock index
+    muts[index].lock();
     
     while (node != nullptr) {
       if (node->key == key) {
@@ -134,6 +148,9 @@ public:
       }
       node = node->next;
     }
+
+    // unlock index
+    muts[index].unlock();
 
     //if we get here, then the key has not been found
     node = new Node<K,V>(key, value);
@@ -180,3 +197,4 @@ public:
 };
 
 #endif
+
