@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <mutex>
+#include <condition_variable>
 
 template<class K, class V>
 struct Node {
@@ -137,6 +138,11 @@ public:
     std::size_t index = std::hash<K>{}(key) % this->capacity;
     index = index < 0 ? index + this->capacity : index;
     Node<K,V>* node = this->table[index];
+    bool done = false;
+    
+    // wait
+    std::condition_variable_any cond;
+    cond.wait(muts[index % 1000], [&]() {return (done);});
 
     // lock index
     muts[index % 1000].lock();
