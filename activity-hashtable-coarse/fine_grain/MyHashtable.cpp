@@ -27,7 +27,7 @@ protected:
   typedef typename Dictionary<K, V>::dict_iter dict_iter;
 
   // create mutex locks
-  std::array<std::mutex, 500000> muts;
+  std::array<std::mutex, 1000000> muts;
   
   int capacity;
   int count;
